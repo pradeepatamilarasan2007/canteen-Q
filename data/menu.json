@@ -1,0 +1,122 @@
+[
+  {
+    "id": "m1",
+    "name": "Masala Dosa",
+    "category": "Breakfast",
+    "price": 60,
+    "isVeg": true,
+    "prepTimeMinutes": 8,
+    "isAvailable": true,
+    "description": "Crispy rice crepe filled with spiced potato masala, served with coconut chutney & sambar.",
+    "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400&q=80",
+    "rating": 4.8
+  },
+  {
+    "id": "m2",
+    "name": "Samosa (2 pcs)",
+    "category": "Snacks",
+    "price": 30,
+    "isVeg": true,
+    "prepTimeMinutes": 3,
+    "isAvailable": true,
+    "description": "Golden fried savory pastry filled with spiced potato and peas mix.",
+    "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80",
+    "rating": 4.6
+  },
+  {
+    "id": "m3",
+    "name": "Veg Cheese Grilled Sandwich",
+    "category": "Snacks",
+    "price": 75,
+    "isVeg": true,
+    "prepTimeMinutes": 7,
+    "isAvailable": true,
+    "description": "Loaded with capsicum, onion, tomato, mint chutney and melted cheddar cheese.",
+    "image": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80",
+    "rating": 4.7
+  },
+  {
+    "id": "m4",
+    "name": "Chicken Biryani Combo",
+    "category": "Meals",
+    "price": 140,
+    "isVeg": false,
+    "prepTimeMinutes": 12,
+    "isAvailable": true,
+    "description": "Fragrant basmati rice dum cooked with tender chicken pieces, raita & boiled egg.",
+    "image": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&q=80",
+    "rating": 4.9
+  },
+  {
+    "id": "m5",
+    "name": "Paneer Butter Masala Thali",
+    "category": "Meals",
+    "price": 120,
+    "isVeg": true,
+    "prepTimeMinutes": 10,
+    "isAvailable": true,
+    "description": "Rich cottage cheese curry with 2 butter butter naans, jeera rice, salad and pickle.",
+    "image": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&q=80",
+    "rating": 4.8
+  },
+  {
+    "id": "m6",
+    "name": "Cold Coffee with Ice Cream",
+    "category": "Beverages",
+    "price": 50,
+    "isVeg": true,
+    "prepTimeMinutes": 4,
+    "isAvailable": true,
+    "description": "Creamy thick iced coffee topped with a scoop of vanilla ice cream & chocolate syrup.",
+    "image": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400&q=80",
+    "rating": 4.9
+  },
+  {
+    "id": "m7",
+    "name": "Kulhad Masala Chai",
+    "category": "Beverages",
+    "price": 20,
+    "isVeg": true,
+    "prepTimeMinutes": 3,
+    "isAvailable": true,
+    "description": "Traditional Indian spiced milk tea infused with cardamom, ginger, served in terracotta kulhad.",
+    "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80",
+    "rating": 4.9
+  },
+  {
+    "id": "m8",
+    "name": "Chocolate Brownie Sundae",
+    "category": "Desserts",
+    "price": 85,
+    "isVeg": true,
+    "prepTimeMinutes": 5,
+    "isAvailable": true,
+    "description": "Warm fudge brownie topped with vanilla ice cream, hot chocolate fudge and roasted nuts.",
+    "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&q=80",
+    "rating": 4.7
+  },
+  {
+    "id": "m9",
+    "name": "Veg Hakka Noodles",
+    "category": "Meals",
+    "price": 90,
+    "isVeg": true,
+    "prepTimeMinutes": 9,
+    "isAvailable": true,
+    "description": "Wok-tossed stir-fry noodles with crunchy veggies, soya sauce, garlic and chili.",
+    "image": "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&q=80",
+    "rating": 4.5
+  },
+  {
+    "id": "m10",
+    "name": "Crispy French Fries",
+    "category": "Snacks",
+    "price": 55,
+    "isVeg": true,
+    "prepTimeMinutes": 5,
+    "isAvailable": true,
+    "description": "Golden crunchy salted potato fries served with tangy tomato ketchup & mayo dip.",
+    "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80",
+    "rating": 4.5
+  }
+]

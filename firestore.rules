@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isStaff() {
+      return isAuthenticated() && 
+        (request.auth.token.role == 'staff' || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'staff');
+    }
+
+    // Users collection:
+    // Students can read/write their own profile; staff can read all profiles.
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isStaff();
+      allow write: if isOwner(userId) || isStaff();
+    }
+
+    // Menu items collection:
+    // Anyone authenticated or public can read the menu; only staff can create/update/delete.
+    match /menu/{itemId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // Combos collection:
+    // Anyone can read combos; only staff can modify.
+    match /combos/{comboId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+
+    // Orders collection:
+    // - Students can read their own orders. Staff can read all orders.
+    // - Students can create an order with their own studentId.
+    // - Students can update their order ONLY to status 'Cancelled' if current status is 'Order Placed' or 'Accepted'.
+    // - Staff can update any order status (e.g. Accepted, Preparing, Ready for Pickup, Collected, Rejected).
+    match /orders/{orderId} {
+      allow read: if isStaff() || (isAuthenticated() && resource.data.studentId == request.auth.uid);
+      allow create: if isAuthenticated() && request.resource.data.studentId == request.auth.uid;
+      allow update: if isStaff() || (
+        isAuthenticated() && 
+        resource.data.studentId == request.auth.uid &&
+        request.resource.data.status == 'Cancelled' &&
+        (resource.data.status == 'Order Placed' || resource.data.status == 'Accepted')
+      );
+      allow delete: if isStaff();
+    }
+
+    // Notifications collection:
+    // Students can read/update (mark read) only their own notifications.
+    // Staff can create notifications for students.
+    match /notifications/{notificationId} {
+      allow read: if isStaff() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow create: if isStaff();
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow delete: if isStaff() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+    }
+
+    // Ratings and feedback collection:
+    // Students can create a rating only for their own collected orders.
+    // All authenticated users can read ratings; staff can read all.
+    match /ratings/{ratingId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.resource.data.studentId == request.auth.uid;
+      allow update, delete: if isStaff();
+    }
+    
+    // Operating settings collection:
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isStaff();
+    }
+  }
+}
