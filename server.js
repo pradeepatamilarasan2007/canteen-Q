@@ -1,7 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const { 
+  sendFoodReadySMS, 
+  sendTestSMS, 
+  getGatewayConfigStatus, 
+  normalizePhoneNumber 
+} = require('./smsService');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -60,18 +67,42 @@ const INITIAL_MENU = [
   },
   {
     id: "m4",
-    name: "Veg Cheese Grilled Sandwich",
-    category: "Snacks",
-    price: 75,
+    name: "Medu Vada (2 pcs)",
+    category: "Breakfast",
+    price: 35,
     isVeg: true,
-    prepTimeMinutes: 7,
+    prepTimeMinutes: 5,
     isAvailable: true,
-    description: "Crispy grilled bread packed with capsicum, onion, tomato, mint chutney and melted cheese.",
-    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80",
-    rating: 4.8
+    description: "Crispy golden lentil doughnuts tempered with curry leaves and black peppercorns, with sambar.",
+    image: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=400&q=80",
+    rating: 4.7
   },
   {
     id: "m5",
+    name: "Ghee Podi Thatte Idli",
+    category: "Breakfast",
+    price: 45,
+    isVeg: true,
+    prepTimeMinutes: 4,
+    isAvailable: true,
+    description: "Soft plate idli smeared with aromatic gunpowder chutney podi and clarified desi ghee.",
+    image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&q=80",
+    rating: 4.9
+  },
+  {
+    id: "m6",
+    name: "Onion Uttapam",
+    category: "Breakfast",
+    price: 50,
+    isVeg: true,
+    prepTimeMinutes: 7,
+    isAvailable: true,
+    description: "Thick savory rice-lentil pancake generously topped with caramelized onions, coriander and chilies.",
+    image: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=400&q=80",
+    rating: 4.6
+  },
+  {
+    id: "m7",
     name: "Samosa (2 pcs)",
     category: "Snacks",
     price: 30,
@@ -83,31 +114,79 @@ const INITIAL_MENU = [
     rating: 4.9
   },
   {
-    id: "m6",
-    name: "Kulhad Masala Chai",
-    category: "Beverages",
-    price: 20,
+    id: "m8",
+    name: "Veg Cheese Grilled Sandwich",
+    category: "Snacks",
+    price: 75,
     isVeg: true,
-    prepTimeMinutes: 3,
+    prepTimeMinutes: 7,
     isAvailable: true,
-    description: "Authentic ginger and cardamom spiced Indian tea boiled to perfection, served in an earthen kulhad.",
-    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80",
-    rating: 4.9
+    description: "Crispy grilled bread packed with capsicum, onion, tomato, mint chutney and melted cheese.",
+    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80",
+    rating: 4.8
   },
   {
-    id: "m7",
-    name: "Fresh Orange Juice",
-    category: "Beverages",
-    price: 50,
+    id: "m9",
+    name: "Pav Bhaji (Special Butter)",
+    category: "Snacks",
+    price: 80,
     isVeg: true,
-    prepTimeMinutes: 4,
+    prepTimeMinutes: 8,
     isAvailable: true,
-    description: "Freshly squeezed sweet Nagpur oranges with no added artificial flavours or preservatives.",
-    image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=400&q=80",
+    description: "Spiced mashed vegetable gravy loaded with butter, served with 2 warm toasted pavs and onions.",
+    image: "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=400&q=80",
+    rating: 4.8
+  },
+  {
+    id: "m10",
+    name: "Mumbai Vada Pav",
+    category: "Snacks",
+    price: 25,
+    isVeg: true,
+    prepTimeMinutes: 2,
+    isAvailable: true,
+    description: "Deep fried spiced potato dumpling placed inside a soft bread bun with dry garlic & green chutneys.",
+    image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80",
     rating: 4.7
   },
   {
-    id: "m8",
+    id: "m11",
+    name: "Crispy Peri Peri Fries",
+    category: "Snacks",
+    price: 60,
+    isVeg: true,
+    prepTimeMinutes: 5,
+    isAvailable: true,
+    description: "Golden crispy skin-on potato fries dusted with fiery peri-peri seasoning and creamy garlic dip.",
+    image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80",
+    rating: 4.6
+  },
+  {
+    id: "m12",
+    name: "Paneer Tikka Roll",
+    category: "Snacks",
+    price: 85,
+    isVeg: true,
+    prepTimeMinutes: 8,
+    isAvailable: true,
+    description: "Char-grilled spicy cottage cheese cubes wrapped in flaky paratha with sliced onion and mint dressing.",
+    image: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=400&q=80",
+    rating: 4.8
+  },
+  {
+    id: "m13",
+    name: "Chicken Tikka Kathi Roll",
+    category: "Snacks",
+    price: 95,
+    isVeg: false,
+    prepTimeMinutes: 8,
+    isAvailable: true,
+    description: "Juicy tandoori chicken tikka pieces wrapped in warm paratha with sliced onions and tangy mint chutney.",
+    image: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=400&q=80",
+    rating: 4.9
+  },
+  {
+    id: "m14",
     name: "Chicken Biryani Combo",
     category: "Meals",
     price: 140,
@@ -119,7 +198,7 @@ const INITIAL_MENU = [
     rating: 4.9
   },
   {
-    id: "m9",
+    id: "m15",
     name: "Paneer Butter Masala Thali",
     category: "Meals",
     price: 120,
@@ -131,7 +210,67 @@ const INITIAL_MENU = [
     rating: 4.8
   },
   {
-    id: "m10",
+    id: "m16",
+    name: "Chole Bhature (2 pcs)",
+    category: "Meals",
+    price: 95,
+    isVeg: true,
+    prepTimeMinutes: 9,
+    isAvailable: true,
+    description: "Puffed golden bhaturas served with robust Amritsari spiced chickpeas, pickled chili and sliced onions.",
+    image: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=400&q=80",
+    rating: 4.8
+  },
+  {
+    id: "m17",
+    name: "Veg Fried Rice with Manchurian",
+    category: "Meals",
+    price: 110,
+    isVeg: true,
+    prepTimeMinutes: 9,
+    isAvailable: true,
+    description: "Wok-tossed seasoned basmati rice served with savory vegetable Manchurian balls in garlic-soya gravy.",
+    image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&q=80",
+    rating: 4.7
+  },
+  {
+    id: "m18",
+    name: "South Indian Special Thali",
+    category: "Meals",
+    price: 85,
+    isVeg: true,
+    prepTimeMinutes: 6,
+    isAvailable: true,
+    description: "Comfort meal with hot steamed rice, drumstick sambar, rasam, kootu, curd, crisp papad and sweet payasam.",
+    image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=400&q=80",
+    rating: 4.8
+  },
+  {
+    id: "m19",
+    name: "Kulhad Masala Chai",
+    category: "Beverages",
+    price: 20,
+    isVeg: true,
+    prepTimeMinutes: 3,
+    isAvailable: true,
+    description: "Authentic ginger and cardamom spiced Indian tea boiled to perfection, served in an earthen kulhad.",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80",
+    rating: 4.9
+  },
+  {
+    id: "m20",
+    name: "Fresh Orange Juice",
+    category: "Beverages",
+    price: 50,
+    isVeg: true,
+    prepTimeMinutes: 4,
+    isAvailable: true,
+    description: "Freshly squeezed sweet Nagpur oranges with no added artificial flavours or preservatives.",
+    image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=400&q=80",
+    rating: 4.7
+  },
+  {
+    id: "m21",
     name: "Cold Coffee with Ice Cream",
     category: "Beverages",
     price: 50,
@@ -140,6 +279,42 @@ const INITIAL_MENU = [
     isAvailable: true,
     description: "Frothy chilled coffee blended with milk, chocolate drizzle, and crowned with vanilla ice cream.",
     image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400&q=80",
+    rating: 4.8
+  },
+  {
+    id: "m22",
+    name: "Sweet Mango Lassi",
+    category: "Beverages",
+    price: 45,
+    isVeg: true,
+    prepTimeMinutes: 3,
+    isAvailable: true,
+    description: "Thick creamy yogurt churned with sweet Alphonso mango pulp and topped with chopped pistachios.",
+    image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400&q=80",
+    rating: 4.9
+  },
+  {
+    id: "m23",
+    name: "Chocolate Brownie Sundae",
+    category: "Desserts",
+    price: 85,
+    isVeg: true,
+    prepTimeMinutes: 5,
+    isAvailable: true,
+    description: "Warm fudge brownie topped with vanilla ice cream, hot chocolate fudge and roasted nuts.",
+    image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&q=80",
+    rating: 4.9
+  },
+  {
+    id: "m24",
+    name: "Hot Gulab Jamun (2 pcs)",
+    category: "Desserts",
+    price: 35,
+    isVeg: true,
+    prepTimeMinutes: 2,
+    isAvailable: true,
+    description: "Golden milk-solid dumplings deep fried and dipped in warm saffron-cardamom sugar syrup.",
+    image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&q=80",
     rating: 4.8
   }
 ];
@@ -330,7 +505,19 @@ app.get('/api/orders', (req, res) => {
 app.post('/api/orders', (req, res) => {
   const orders = readJSONFile(ORDERS_FILE, INITIAL_ORDERS);
   const menu = readJSONFile(MENU_FILE, INITIAL_MENU);
-  const { customerName, phone, items, paymentMethod, specialInstructions, isScheduled, pickupDate, pickupTime, studentId } = req.body;
+  const { 
+    id,
+    tokenNumber,
+    customerName, 
+    phone, 
+    items, 
+    paymentMethod, 
+    specialInstructions, 
+    isScheduled, 
+    pickupDate, 
+    pickupTime, 
+    studentId 
+  } = req.body;
 
   if (!items || items.length === 0) {
     return res.status(400).json({ success: false, message: 'Cart cannot be empty' });
@@ -344,21 +531,39 @@ app.post('/api/orders', (req, res) => {
     }
   }
 
+  // Validate and normalize customer phone number
+  const phoneValidation = normalizePhoneNumber(phone || '');
+  const registeredPhone = phoneValidation.isValid ? phoneValidation.formatted : (phone || '');
+
   // Calculate active queue and estimated wait time
   const activeOrders = orders.filter(o => o.status === 'Order Placed' || o.status === 'Accepted' || o.status === 'Preparing');
   const maxPrepTime = Math.max(...items.map(i => i.prepTimeMinutes || 5), 5);
   const estimatedWait = maxPrepTime + (activeOrders.length * 3);
 
-  // Generate unique CQ Token
-  const currentToken = `CQ${String(tokenCounter++).padStart(3, '0')}`;
+  // Generate or reuse unique token
+  let orderToken = tokenNumber;
+  if (!orderToken) {
+    orderToken = `CQ${String(tokenCounter++).padStart(3, '0')}`;
+  } else {
+    // Keep internal counter ahead of incoming token numbers
+    const numMatch = orderToken.match(/\d+/);
+    if (numMatch) {
+      const parsedNum = parseInt(numMatch[0], 10);
+      if (parsedNum >= tokenCounter) tokenCounter = parsedNum + 1;
+    }
+  }
+
+  const orderId = id || ("ord_" + Date.now());
   const totalAmount = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
 
   const newOrder = {
-    id: "ord_" + Date.now(),
-    tokenNumber: currentToken,
+    id: orderId,
+    tokenNumber: orderToken,
     studentId: studentId || "student_guest",
     customerName: customerName || "Student",
-    phone: phone || "9876543210",
+    phone: registeredPhone,
+    rawPhone: phone || '',
+    phoneValid: phoneValidation.isValid,
     items,
     totalAmount,
     paymentMethod: paymentMethod || "UPI",
@@ -366,13 +571,23 @@ app.post('/api/orders', (req, res) => {
     isScheduled: Boolean(isScheduled),
     pickupDate: pickupDate || null,
     pickupTime: pickupTime || null,
-    status: "Order Placed",
-    createdAt: new Date().toISOString(),
-    estimatedWaitMinutes: estimatedWait
+    status: req.body.status || "Order Placed",
+    createdAt: req.body.createdAt || new Date().toISOString(),
+    estimatedWaitMinutes: req.body.estimatedWaitMinutes || estimatedWait,
+    smsNotificationSent: false
   };
 
-  orders.unshift(newOrder);
+  // Check if order with this id already exists (e.g. from frontend sync)
+  const existingIndex = orders.findIndex(o => o.id === newOrder.id);
+  if (existingIndex >= 0) {
+    orders[existingIndex] = { ...orders[existingIndex], ...newOrder };
+  } else {
+    orders.unshift(newOrder);
+  }
+
   writeJSONFile(ORDERS_FILE, orders);
+
+  console.log(`[Order Created] Order #${orderId} (${orderToken}) created for ${newOrder.customerName} | Phone: ${newOrder.phone}`);
 
   res.status(201).json({
     success: true,
@@ -382,28 +597,122 @@ app.post('/api/orders', (req, res) => {
 });
 
 // 8. PATCH /api/orders/:id/status - Update order status
-app.patch('/api/orders/:id/status', (req, res) => {
+app.patch('/api/orders/:id/status', async (req, res) => {
   const orders = readJSONFile(ORDERS_FILE, INITIAL_ORDERS);
-  const order = orders.find(o => o.id === req.params.id);
+  let order = orders.find(o => o.id === req.params.id);
 
   if (!order) {
-    return res.status(404).json({ success: false, message: 'Order not found' });
+    // If not found in file, auto-register using order details provided in request body
+    if (req.body.order || req.body.phone) {
+      const incomingPhone = req.body.phone || req.body.order?.phone || '';
+      const phoneVal = normalizePhoneNumber(incomingPhone);
+      order = {
+        id: req.params.id,
+        tokenNumber: req.body.tokenNumber || req.body.order?.tokenNumber || 'CQ000',
+        customerName: req.body.customerName || req.body.order?.customerName || 'Student',
+        phone: phoneVal.isValid ? phoneVal.formatted : incomingPhone,
+        rawPhone: incomingPhone,
+        status: req.body.status || 'Order Placed',
+        items: req.body.order?.items || [],
+        totalAmount: req.body.order?.totalAmount || 0,
+        createdAt: req.body.order?.createdAt || new Date().toISOString(),
+        smsNotificationSent: false
+      };
+      orders.unshift(order);
+    } else {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+  }
+
+  // Ensure the phone number from the placed order is always present
+  if ((!order.phone || order.phone.trim() === '') && (req.body.phone || req.body.order?.phone)) {
+    const fallbackPhone = req.body.phone || req.body.order?.phone;
+    const phoneVal = normalizePhoneNumber(fallbackPhone);
+    order.phone = phoneVal.isValid ? phoneVal.formatted : fallbackPhone;
   }
 
   const { status, reason } = req.body;
-  const allowed = ['Order Placed', 'Accepted', 'Preparing', 'Ready for Pickup', 'Collected', 'Cancelled', 'Rejected'];
+  const allowed = [
+    'Order Placed', 
+    'Accepted', 
+    'Preparing', 
+    'Ready for Collection', 
+    'Ready for Pickup', 
+    'Collected', 
+    'Cancelled', 
+    'Rejected'
+  ];
+
   if (!allowed.includes(status)) {
-    return res.status(400).json({ success: false, message: 'Invalid status transition' });
+    return res.status(400).json({ success: false, message: 'Invalid status transition: ' + status });
   }
 
+  const previousStatus = order.status;
   order.status = status;
   order.updatedAt = new Date().toISOString();
-  if (status === 'Ready for Pickup') order.readyAt = new Date().toISOString();
+
+  const isReadyStatus = (status === 'Ready for Collection' || status === 'Ready for Pickup');
+  if (isReadyStatus) {
+    order.readyAt = new Date().toISOString();
+  }
   if (status === 'Collected') order.completedAt = new Date().toISOString();
   if (status === 'Rejected') order.rejectionReason = reason || 'Item out of stock';
 
+  // Requirement 12: Ensure notification is sent only AFTER backend successfully processes the status change.
+  // Requirement 7: Avoid sending duplicate SMS messages if the same order status is updated repeatedly.
+  // Requirement 6: Trigger SMS only when order status changes to "Ready for Collection" (or "Ready for Pickup").
+  let smsResult = null;
+
+  if (isReadyStatus) {
+    if (order.smsNotificationSent) {
+      console.log(`[SMS Prevention] Order ${order.id} (${order.tokenNumber}) is ALREADY marked ready. SMS previously dispatched on ${order.smsSentAt}. Skipping duplicate SMS.`);
+      smsResult = {
+        sent: false,
+        skipped: true,
+        reason: 'Duplicate SMS avoided: notification already sent for this order',
+        sentAt: order.smsSentAt,
+        messageId: order.smsMessageId || null,
+        recipient: order.phone
+      };
+    } else {
+      // 1. Commit the status transition to storage FIRST (Requirement 12)
+      writeJSONFile(ORDERS_FILE, orders);
+
+      // 2. Dispatch the SMS notification strictly to the customer's registered phone
+      const targetPhone = order.phone || req.body.phone || req.body.order?.phone;
+      console.log(`[Order Status Changed] Order ${order.id} (${order.tokenNumber}) status changed: "${previousStatus}" -> "${status}". Triggering SMS notification to customer phone: ${targetPhone}...`);
+      smsResult = await sendFoodReadySMS({
+        orderId: order.id,
+        tokenNumber: order.tokenNumber,
+        customerName: order.customerName,
+        phone: targetPhone
+      });
+
+      // 3. Record SMS outcome on the order object
+      if (smsResult.success) {
+        order.smsNotificationSent = true;
+        order.smsSentAt = new Date().toISOString();
+        order.smsMessageId = smsResult.messageId;
+        order.smsStatus = 'SENT';
+        order.smsRecipient = smsResult.recipient;
+        delete order.smsError;
+      } else {
+        order.smsNotificationSent = false;
+        order.smsStatus = smsResult.notConfigured ? 'GATEWAY_NOT_CONFIGURED' : 'DELIVERY_FAILED';
+        order.smsError = smsResult.error;
+        order.smsRecipient = smsResult.recipient || order.phone;
+      }
+    }
+  }
+
+  // Persist updated order with SMS delivery status
   writeJSONFile(ORDERS_FILE, orders);
-  res.json({ success: true, order });
+
+  res.json({
+    success: true,
+    order,
+    sms: smsResult
+  });
 });
 
 // 9. POST /api/orders/:id/cancel - Student cancellation endpoint
@@ -455,7 +764,7 @@ app.get('/api/queue/stats', (req, res) => {
 
   const pending = orders.filter(o => o.status === 'Order Placed' || o.status === 'Accepted').length;
   const preparing = orders.filter(o => o.status === 'Preparing').length;
-  const ready = orders.filter(o => o.status === 'Ready for Pickup').length;
+  const ready = orders.filter(o => o.status === 'Ready for Collection' || o.status === 'Ready for Pickup').length;
   const completed = orders.filter(o => o.status === 'Collected').length;
   
   const totalRevenue = orders
@@ -473,6 +782,23 @@ app.get('/api/queue/stats', (req, res) => {
       totalRevenue
     }
   });
+});
+
+// 12. GET /api/sms/status - Get SMS gateway configuration & health
+app.get('/api/sms/status', (req, res) => {
+  const status = getGatewayConfigStatus();
+  res.json({ success: true, ...status });
+});
+
+// 13. POST /api/sms/test - Send test SMS to verify phone & credentials
+app.post('/api/sms/test', async (req, res) => {
+  const { phone, message } = req.body;
+  if (!phone) {
+    return res.status(400).json({ success: false, message: 'Recipient phone number is required' });
+  }
+
+  const result = await sendTestSMS({ phone, message });
+  res.json({ success: result.success, ...result });
 });
 
 // Serve frontend static build files

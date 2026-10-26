@@ -136,6 +136,34 @@ If no Firebase credentials are configured in `.env`, CanteenQ automatically swit
 
 ---
 
+---
+
+## 📲 Food Ready SMS Notifications (Twilio Integration)
+
+CanteenQ automatically delivers a real-time SMS notification to the customer's mobile phone when the canteen staff marks their order as **"Ready for Collection"**.
+
+### Notification Message Format:
+```
+Hello! Your CanteenQ order #[Token/Order ID] is ready for collection. Please collect your food from the canteen. Thank you!
+```
+
+### Key Technical Safeguards:
+1. **Server-Side Security**: Credentials (`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`) stay strictly on the backend Node.js server. No secret keys are exposed to the client.
+2. **Duplicate Prevention**: The backend maintains `smsNotificationSent: true` and logs timestamps. Repeated status clicks or re-saves never dispatch duplicate SMS messages.
+3. **E.164 Phone Normalization**: Automatically normalizes 10-digit Indian numbers (`9876543210` -> `+919876543210`) or handles international numbers.
+4. **Resilient Error Handling**: Missing or invalid numbers are logged with diagnostics without crashing the order workflow.
+5. **Kitchen Dashboard Badges & Test Modal**: Staff tickets visually show `[SMS Sent]`, `[SMS Config Needed]`, or `[SMS Failed]`. Staff can test SMS delivery using the **"Test SMS Gateway"** button directly on the dashboard.
+
+### Configuring Twilio Credentials in `.env`:
+```env
+TWILIO_ACCOUNT_SID=your_twilio_account_sid_here
+TWILIO_AUTH_TOKEN=your_twilio_auth_token_here
+TWILIO_PHONE_NUMBER=+1xxxxxxxxxx
+DEFAULT_COUNTRY_CODE=+91
+```
+
+---
+
 ## ✅ Completed Deliverables Matrix
 
 | Feature | Status | Notes |
@@ -150,8 +178,9 @@ If no Firebase credentials are configured in `.env`, CanteenQ automatically swit
 | Scheduled Pre-Ordering | Completed | Date and time selector restricted to operating hours |
 | Live Stock Availability Toggle | Completed | Staff can toggle items `Available` or `Sold Out` instantly |
 | Order Cancellation Policy | Completed | Allowed during `Order Placed` / `Accepted`; locked once `Preparing` |
-| Real-Time Order Stepper | Completed | 5-step progress: Placed → Accepted → Preparing → Ready → Collected |
-| In-App Ready Notifications | Completed | Triggers notification when status changes to Ready for Pickup |
+| Real-Time Order Stepper | Completed | 5-step progress: Placed → Accepted → Preparing → Ready for Collection → Collected |
+| Food Ready SMS Notification | Completed | Dispatches SMS via Twilio on Ready for Collection with duplicate prevention |
+| SMS Gateway Test Tool | Completed | In-dashboard test modal and backend /api/sms/test endpoint |
 | Food Rating & Feedback | Completed | 1-5 stars & feedback comments on collected orders |
 | Reorder ("Order Again") | Completed | Re-adds items to cart with fresh availability checks |
 | Combo Offers | Completed | Value bundle creation and student ordering |

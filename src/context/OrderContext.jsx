@@ -71,12 +71,24 @@ export function OrderProvider({ children }) {
         ordersUnsub();
         notifUnsub();
       };
-    } else {
       // Demo Store subscription
       const initialOrders = demoStore.getOrders();
       setOrders(initialOrders);
       setNotifications(demoStore.getNotifications());
       setLoadingOrders(false);
+
+      // Attempt to load and sync with Express backend API
+      fetch('/api/orders')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.success && Array.isArray(data.orders)) {
+            setOrders(data.orders);
+            demoStore.setOrders(data.orders);
+          }
+        })
+        .catch(() => {
+          // Fallback to local storage if server is not yet running
+        });
 
       const unsubOrders = demoStore.subscribe('orders', (allOrders) => {
         setOrders(allOrders);
@@ -98,13 +110,13 @@ export function OrderProvider({ children }) {
     }
   }, [currentUser?.uid, isStaff]);
 
-  // Real-time notification trigger when an order status changes to "Ready for Pickup"
+  // Real-time notification trigger when an order status changes to "Ready for Collection"
   useEffect(() => {
     if (!currentUser || isStaff) return;
 
-    // Check user's orders that are "Ready for Pickup"
+    // Check user's orders that are "Ready for Collection" or "Ready for Pickup"
     const userReadyOrders = orders.filter(
-      o => o.studentId === currentUser.uid && o.status === 'Ready for Pickup'
+      o => o.studentId === currentUser.uid && (o.status === 'Ready for Collection' || o.status === 'Ready for Pickup')
     );
 
     userReadyOrders.forEach((ord) => {
@@ -119,8 +131,8 @@ export function OrderProvider({ children }) {
             userId: currentUser.uid,
             orderId: ord.id,
             tokenNumber: ord.tokenNumber,
-            title: "Ready for Pickup! 🔔",
-            message: `Your order is ready! Pickup Token: ${ord.tokenNumber}. Please collect your food at Counter #1.`
+            title: "Ready for Collection! 🔔",
+            message: `Hello! Your CanteenQ order #${ord.tokenNumber || ord.id} is ready for collection. Please collect your food from the canteen. Thank you!`
           });
         }
       }
@@ -332,7 +344,8 @@ export function OrderProvider({ children }) {
       pickupTime,
       status: "Order Placed", // Initial status
       estimatedWaitMinutes,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      smsNotificationSent: false
     };
 
     if (isFirebaseConfigured && db) {
@@ -344,13 +357,33 @@ export function OrderProvider({ children }) {
       setOrders(updated);
     }
 
+    // Sync order with Express server backend so server-side SMS and persistence stay aligned
+    try {
+      await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newOrder)
+      });
+    } catch (err) {
+      console.log('[OrderContext] Backend order sync notice:', err.message);
+    }
+
     clearCart();
     return newOrder;
   };
 
   // Update order status (Staff workflow)
   const updateOrderStatus = async (orderId, newStatus, reason = '') => {
-    const validStatuses = ['Order Placed', 'Accepted', 'Preparing', 'Ready for Pickup', 'Collected', 'Cancelled', 'Rejected'];
+    const validStatuses = [
+      'Order Placed', 
+      'Accepted', 
+      'Preparing', 
+      'Ready for Collection', 
+      'Ready for Pickup', 
+      'Collected', 
+      'Cancelled', 
+      'Rejected'
+    ];
     if (!validStatuses.includes(newStatus)) {
       throw new Error(`Invalid status: ${newStatus}`);
     }
@@ -363,12 +396,44 @@ export function OrderProvider({ children }) {
       updatedAt: new Date().toISOString()
     };
 
-    if (newStatus === 'Ready for Pickup') {
+    const isReady = (newStatus === 'Ready for Collection' || newStatus === 'Ready for Pickup');
+    if (isReady) {
       patch.readyAt = new Date().toISOString();
     } else if (newStatus === 'Collected') {
       patch.completedAt = new Date().toISOString();
     } else if (newStatus === 'Rejected') {
       patch.rejectionReason = reason || 'Item out of stock or kitchen closed';
+    }
+
+    // Requirement 12: Dispatch status update to backend API and receive SMS notification result
+    let backendSMSResult = null;
+    try {
+      const res = await fetch(`/api/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          status: newStatus, 
+          reason,
+          phone: orderToUpdate.phone,
+          customerName: orderToUpdate.customerName,
+          tokenNumber: orderToUpdate.tokenNumber,
+          order: orderToUpdate
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.order) {
+          patch.smsNotificationSent = data.order.smsNotificationSent;
+          patch.smsSentAt = data.order.smsSentAt;
+          patch.smsMessageId = data.order.smsMessageId;
+          patch.smsStatus = data.order.smsStatus;
+          patch.smsError = data.order.smsError;
+          patch.smsRecipient = data.order.smsRecipient;
+        }
+        backendSMSResult = data.sms;
+      }
+    } catch (err) {
+      console.warn('[OrderContext] Backend PATCH status error:', err.message);
     }
 
     if (isFirebaseConfigured && db) {
@@ -380,16 +445,18 @@ export function OrderProvider({ children }) {
       setOrders(updated);
     }
 
-    // If status became Ready for Pickup, send notification to student
-    if (newStatus === 'Ready for Pickup') {
+    // If status became Ready for Collection, send in-app notification to student
+    if (isReady) {
       triggerInAppNotification({
         userId: orderToUpdate.studentId,
         orderId: orderToUpdate.id,
         tokenNumber: orderToUpdate.tokenNumber,
-        title: "Your order is ready! 🔔",
-        message: `Pickup Token: ${orderToUpdate.tokenNumber}. Please collect your food at Counter #1.`
+        title: "Ready for Collection! 🔔",
+        message: `Hello! Your CanteenQ order #${orderToUpdate.tokenNumber || orderToUpdate.id} is ready for collection. Please collect your food from the canteen. Thank you!`
       });
     }
+
+    return { success: true, sms: backendSMSResult };
   };
 
   // Student Cancel Order

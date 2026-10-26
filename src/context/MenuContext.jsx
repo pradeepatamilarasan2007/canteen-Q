@@ -61,9 +61,23 @@ export function MenuProvider({ children }) {
       };
     } else {
       // Demo Store subscription
-      setMenu(demoStore.getMenu());
+      const initial = demoStore.getMenu();
+      setMenu(initial);
       setCombos(demoStore.getCombos());
       setLoading(false);
+
+      // Attempt to load live menu from Express backend API
+      fetch('/api/menu')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.success && Array.isArray(data.menu)) {
+            setMenu(data.menu);
+            demoStore.setMenu(data.menu);
+          }
+        })
+        .catch(() => {
+          // If server offline, keep demoStore menu
+        });
 
       const unsubMenu = demoStore.subscribe('menu', (newMenu) => setMenu(newMenu));
       const unsubCombos = demoStore.subscribe('combos', (newCombos) => setCombos(newCombos));

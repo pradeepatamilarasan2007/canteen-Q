@@ -1,5 +1,232 @@
 [
   {
+    "id": "ord_1792948850275",
+    "tokenNumber": "CQ027",
+    "studentId": "student_demo_1",
+    "customerName": "iswarya",
+    "phone": "+916369728104",
+    "rawPhone": "6369728104",
+    "phoneValid": true,
+    "items": [
+      {
+        "id": "m14",
+        "name": "Chicken Biryani Combo",
+        "price": 140,
+        "quantity": 1,
+        "prepTimeMinutes": 12,
+        "isVeg": false
+      }
+    ],
+    "totalAmount": 140,
+    "paymentMethod": "Cash",
+    "specialInstructions": "more spicy",
+    "isScheduled": false,
+    "pickupDate": null,
+    "pickupTime": null,
+    "status": "Collected",
+    "createdAt": "2026-10-25T17:20:50.275Z",
+    "estimatedWaitMinutes": 12,
+    "smsNotificationSent": true,
+    "updatedAt": "2026-10-25T17:21:55.691Z",
+    "readyAt": "2026-10-25T17:21:13.222Z",
+    "smsSentAt": "2026-10-25T17:21:15.229Z",
+    "smsMessageId": "SMcd4338e2cf9c43dbdab4ac6efb5008ae",
+    "smsStatus": "SENT",
+    "smsRecipient": "+916369728104",
+    "completedAt": "2026-10-25T17:21:55.691Z"
+  },
+  {
+    "id": "ord_1792948702279",
+    "tokenNumber": "CQ021",
+    "studentId": "student_demo_1",
+    "customerName": "iswarya",
+    "phone": "+919360949939",
+    "rawPhone": "9360949939",
+    "phoneValid": true,
+    "items": [
+      {
+        "id": "m12",
+        "name": "Paneer Tikka Roll",
+        "price": 85,
+        "quantity": 1,
+        "prepTimeMinutes": 8,
+        "isVeg": true
+      }
+    ],
+    "totalAmount": 85,
+    "paymentMethod": "Cash",
+    "specialInstructions": "less spicy",
+    "isScheduled": false,
+    "pickupDate": null,
+    "pickupTime": null,
+    "status": "Collected",
+    "createdAt": "2026-10-25T17:18:22.279Z",
+    "estimatedWaitMinutes": 8,
+    "smsNotificationSent": false,
+    "updatedAt": "2026-10-25T17:19:44.426Z",
+    "readyAt": "2026-10-25T17:18:54.460Z",
+    "smsStatus": "DELIVERY_FAILED",
+    "smsError": "No Twilio trial phone number is assigned for messaging to this destination number. Please add the 'to' number as a verified recipient.",
+    "smsRecipient": "+919360949939",
+    "completedAt": "2026-10-25T17:19:44.426Z"
+  },
+  {
+    "id": "ord_live_1792948577532",
+    "tokenNumber": "CQ888",
+    "studentId": "student_guest",
+    "customerName": "Pradeepa",
+    "phone": "+916369728104",
+    "rawPhone": "+916369728104",
+    "phoneValid": true,
+    "items": [
+      {
+        "name": "Masala Dosa",
+        "price": 65,
+        "quantity": 2
+      }
+    ],
+    "totalAmount": 130,
+    "paymentMethod": "UPI",
+    "specialInstructions": "",
+    "isScheduled": false,
+    "pickupDate": null,
+    "pickupTime": null,
+    "status": "Ready for Collection",
+    "createdAt": "2026-10-25T17:16:17.648Z",
+    "estimatedWaitMinutes": 14,
+    "smsNotificationSent": true,
+    "updatedAt": "2026-10-25T17:16:43.878Z",
+    "readyAt": "2026-10-25T17:16:43.878Z",
+    "smsSentAt": "2026-10-25T17:16:19.491Z",
+    "smsMessageId": "SMa1f8cbe31b50ea86f211ff7531f14d06",
+    "smsStatus": "SENT",
+    "smsRecipient": "+916369728104"
+  },
+  {
+    "id": "ord_1792946295659",
+    "tokenNumber": "CQ021",
+    "studentId": "student_demo_1",
+    "customerName": "deepa",
+    "phone": "+916369728104",
+    "rawPhone": "6369728104",
+    "phoneValid": true,
+    "items": [
+      {
+        "id": "m13",
+        "name": "Chicken Tikka Kathi Roll",
+        "price": 95,
+        "quantity": 1,
+        "prepTimeMinutes": 8,
+        "isVeg": false
+      }
+    ],
+    "totalAmount": 95,
+    "paymentMethod": "Cash",
+    "specialInstructions": "add spicyness",
+    "isScheduled": false,
+    "pickupDate": null,
+    "pickupTime": null,
+    "status": "Collected",
+    "createdAt": "2026-10-25T16:38:15.659Z",
+    "estimatedWaitMinutes": 8,
+    "smsNotificationSent": false,
+    "updatedAt": "2026-10-25T16:42:34.811Z",
+    "readyAt": "2026-10-25T16:39:29.744Z",
+    "smsStatus": "GATEWAY_NOT_CONFIGURED",
+    "smsError": "Twilio credentials not configured. Missing: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER / TWILIO_MESSAGING_SERVICE_SID",
+    "smsRecipient": "+916369728104",
+    "completedAt": "2026-10-25T16:42:34.811Z"
+  },
+  {
+    "id": "ord_1792944606437",
+    "tokenNumber": "CQ021",
+    "studentId": "student_demo_1",
+    "customerName": "pradeepatamilarasan",
+    "phone": "+916369728104",
+    "rawPhone": "6369728104",
+    "phoneValid": true,
+    "items": [
+      {
+        "id": "m2",
+        "name": "Idli Sambar (2 pcs)",
+        "price": 40,
+        "quantity": 1,
+        "prepTimeMinutes": 4,
+        "isVeg": true
+      }
+    ],
+    "totalAmount": 40,
+    "paymentMethod": "Cash",
+    "specialInstructions": "",
+    "isScheduled": false,
+    "pickupDate": null,
+    "pickupTime": null,
+    "status": "Collected",
+    "createdAt": "2026-10-25T16:10:06.437Z",
+    "estimatedWaitMinutes": 5,
+    "smsNotificationSent": false,
+    "updatedAt": "2026-10-25T16:42:36.765Z",
+    "completedAt": "2026-10-25T16:42:36.765Z"
+  },
+  {
+    "id": "ord_1792940222833",
+    "tokenNumber": "CQ026",
+    "studentId": "student_demo_1",
+    "customerName": "pradeepatamilarasan",
+    "phone": "+916369728104",
+    "rawPhone": "6369728104",
+    "phoneValid": true,
+    "items": [
+      {
+        "id": "m2",
+        "name": "Idli Sambar (2 pcs)",
+        "price": 40,
+        "quantity": 1,
+        "prepTimeMinutes": 4,
+        "isVeg": true
+      }
+    ],
+    "totalAmount": 40,
+    "paymentMethod": "Cash",
+    "specialInstructions": "spicy",
+    "isScheduled": false,
+    "pickupDate": null,
+    "pickupTime": null,
+    "status": "Order Placed",
+    "createdAt": "2026-10-25T14:57:02.833Z",
+    "estimatedWaitMinutes": 17,
+    "smsNotificationSent": false
+  },
+  {
+    "id": "ord_1792940028046",
+    "tokenNumber": "CQ021",
+    "studentId": "student_demo_1",
+    "customerName": "Rahul Sharma",
+    "phone": "+919876543210",
+    "rawPhone": "9876543210",
+    "phoneValid": true,
+    "items": [
+      {
+        "id": "m1",
+        "name": "Masala Dosa",
+        "price": 60,
+        "quantity": 1,
+        "prepTimeMinutes": 8,
+        "isVeg": true
+      }
+    ],
+    "totalAmount": 60,
+    "paymentMethod": "Cash",
+    "specialInstructions": "spicy",
+    "isScheduled": false,
+    "pickupDate": null,
+    "pickupTime": null,
+    "status": "Order Placed",
+    "createdAt": "2026-10-25T14:53:48.046Z",
+    "estimatedWaitMinutes": 8,
+    "smsNotificationSent": false
+  },
+  {
     "id": "ord_1790683055137",
     "tokenNumber": "TQ-105",
     "customerName": "Pradeepatamilarasan",
@@ -89,10 +316,11 @@
     "totalAmount": 190,
     "paymentMethod": "UPI",
     "specialInstructions": "Less spicy",
-    "status": "Completed",
+    "status": "Collected",
     "createdAt": "2026-09-29T04:25:36.257Z",
     "estimatedPickup": "2026-09-29T04:38:36.257Z",
-    "updatedAt": "2026-10-11T13:53:52.363Z"
+    "updatedAt": "2026-10-25T16:42:37.581Z",
+    "completedAt": "2026-10-25T16:42:37.581Z"
   },
   {
     "id": "ord_103",
@@ -116,9 +344,16 @@
     "totalAmount": 205,
     "paymentMethod": "Cash",
     "specialInstructions": "Toast sandwich extra crispy",
-    "status": "Preparing",
+    "status": "Collected",
     "createdAt": "2026-09-29T04:32:36.257Z",
-    "estimatedPickup": "2026-09-29T04:45:36.257Z"
+    "estimatedPickup": "2026-09-29T04:45:36.257Z",
+    "updatedAt": "2026-10-25T16:42:39.071Z",
+    "readyAt": "2026-10-25T16:39:12.936Z",
+    "smsNotificationSent": false,
+    "smsStatus": "GATEWAY_NOT_CONFIGURED",
+    "smsError": "Twilio credentials not configured. Missing: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER / TWILIO_MESSAGING_SERVICE_SID",
+    "smsRecipient": "+919988776655",
+    "completedAt": "2026-10-25T16:42:39.071Z"
   },
   {
     "id": "ord_104",
@@ -142,9 +377,10 @@
     "totalAmount": 205,
     "paymentMethod": "UPI",
     "specialInstructions": "",
-    "status": "Preparing",
+    "status": "Collected",
     "createdAt": "2026-09-29T04:38:36.257Z",
     "estimatedPickup": "2026-09-29T04:52:36.257Z",
-    "updatedAt": "2026-10-11T13:53:55.374Z"
+    "updatedAt": "2026-10-25T16:42:12.497Z",
+    "completedAt": "2026-10-25T16:42:12.497Z"
   }
 ]

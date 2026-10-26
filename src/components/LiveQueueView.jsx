@@ -25,11 +25,11 @@ export default function LiveQueueView({ activeOrder }) {
     setTrackedOrder(found || null);
   };
 
-  const readyOrders = orders.filter(o => o.status === 'Ready for Pickup');
+  const readyOrders = orders.filter(o => o.status === 'Ready for Collection' || o.status === 'Ready for Pickup');
   const preparingOrders = orders.filter(o => o.status === 'Preparing');
   const pendingOrders = orders.filter(o => o.status === 'Order Placed' || o.status === 'Accepted');
 
-  const orderStatuses = ['Order Placed', 'Accepted', 'Preparing', 'Ready for Pickup', 'Collected'];
+  const orderStatuses = ['Order Placed', 'Accepted', 'Preparing', 'Ready for Collection', 'Collected'];
 
   return (
     <div className="space-y-6 pb-12">
@@ -97,11 +97,11 @@ export default function LiveQueueView({ activeOrder }) {
 
               <div className="text-right">
                 <span className={`inline-block px-3 py-1 rounded-lg text-xs font-bold border ${
-                  trackedOrder.status === 'Ready for Pickup' ? 'bg-emerald-600 text-white border-emerald-600 animate-pulse' :
+                  (trackedOrder.status === 'Ready for Collection' || trackedOrder.status === 'Ready for Pickup') ? 'bg-emerald-600 text-white border-emerald-600 animate-pulse' :
                   trackedOrder.status === 'Preparing' ? 'bg-amber-100 text-amber-900 border-amber-300' :
                   'bg-white text-slate-700 border-slate-300'
                 }`}>
-                  {trackedOrder.status}
+                  {trackedOrder.status === 'Ready for Pickup' ? 'Ready for Collection' : trackedOrder.status}
                 </span>
                 <span className="block text-[11px] text-slate-500 mt-1">
                   Est. Wait: ~{trackedOrder.estimatedWaitMinutes || 8}m
@@ -113,7 +113,8 @@ export default function LiveQueueView({ activeOrder }) {
             <div className="pt-1">
               <div className="flex items-center justify-between text-xs">
                 {orderStatuses.map((st, idx) => {
-                  const currentIdx = orderStatuses.indexOf(trackedOrder.status);
+                  let currentIdx = orderStatuses.indexOf(trackedOrder.status);
+                  if (currentIdx === -1 && trackedOrder.status === 'Ready for Pickup') currentIdx = 3;
                   const isPassed = idx <= currentIdx;
                   return (
                     <div key={st} className="flex flex-col items-center">
@@ -137,13 +138,13 @@ export default function LiveQueueView({ activeOrder }) {
       {/* Big Screen Live Token Board (Ready vs In Prep) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         
-        {/* Ready for Pickup column */}
+        {/* Ready for Collection column */}
         <div className="bg-white rounded-2xl border-2 border-emerald-500/80 p-5 shadow-sm space-y-3">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center gap-2">
               <BellRing className="w-5 h-5 text-emerald-600 animate-bounce" />
               <h2 className="text-base font-black text-emerald-950 uppercase tracking-wide">
-                Now Ready For Pickup
+                Now Ready For Collection
               </h2>
             </div>
             <span className="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-2.5 py-1 rounded-full">

@@ -262,16 +262,19 @@ export default function CartDrawer({ isOpen, onClose, onOrderSuccess }) {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Mobile Number *</label>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Mobile Number (for Ready SMS) *</label>
                   <input
                     type="tel"
                     required
-                    maxLength={10}
-                    placeholder="10-digit phone number"
+                    maxLength={15}
+                    placeholder="10-digit mobile number (e.g. 9876543210)"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-800 focus:bg-white"
                   />
+                  <span className="text-[10px] text-slate-500 mt-1 block">
+                    📲 You will receive an SMS on this number when your food is ready for collection.
+                  </span>
                 </div>
 
                 <div>

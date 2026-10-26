@@ -34,7 +34,7 @@ export default function Navbar({
   // Active student orders count
   const myActiveOrdersCount = orders.filter(
     o => o.studentId === currentUser?.uid && 
-         (o.status === 'Order Placed' || o.status === 'Accepted' || o.status === 'Preparing' || o.status === 'Ready for Pickup')
+         (o.status === 'Order Placed' || o.status === 'Accepted' || o.status === 'Preparing' || o.status === 'Ready for Collection' || o.status === 'Ready for Pickup')
   ).length;
 
   const studentNavItems = [

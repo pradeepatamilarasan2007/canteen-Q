@@ -78,9 +78,10 @@ export default function MyOrdersView({ onOrderAgainSuccess }) {
     if (onOrderAgainSuccess) onOrderAgainSuccess();
   };
 
-  const orderStatuses = ['Order Placed', 'Accepted', 'Preparing', 'Ready for Pickup', 'Collected'];
+  const orderStatuses = ['Order Placed', 'Accepted', 'Preparing', 'Ready for Collection', 'Collected'];
 
   const getStatusStepIndex = (status) => {
+    if (status === 'Ready for Pickup') return 3;
     const idx = orderStatuses.indexOf(status);
     return idx >= 0 ? idx : 0;
   };
@@ -182,14 +183,14 @@ export default function MyOrdersView({ onOrderAgainSuccess }) {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold ${
-                          order.status === 'Ready for Pickup' ? 'bg-emerald-600 text-white animate-pulse' :
+                          (order.status === 'Ready for Collection' || order.status === 'Ready for Pickup') ? 'bg-emerald-600 text-white animate-pulse' :
                           order.status === 'Preparing' ? 'bg-amber-100 text-amber-900' :
                           order.status === 'Accepted' ? 'bg-blue-100 text-blue-900' :
                           order.status === 'Collected' ? 'bg-slate-200 text-slate-800' :
                           isTerminal ? 'bg-red-100 text-red-800' :
                           'bg-emerald-100 text-emerald-900'
                         }`}>
-                          {order.status}
+                          {order.status === 'Ready for Pickup' ? 'Ready for Collection' : order.status}
                         </span>
 
                         {order.isScheduled && (
