@@ -28,8 +28,13 @@ export default function MyOrdersView({ onOrderAgainSuccess }) {
   const [toastMessage, setToastMessage] = useState(null);
   const [actionError, setActionError] = useState('');
 
-  // Filter orders for current authenticated student
-  const studentOrders = orders.filter(o => !currentUser || o.studentId === currentUser.uid);
+  // Filter orders for current authenticated student (including guest orders and phone matches)
+  const studentOrders = orders.filter(o => 
+    !currentUser || 
+    o.studentId === currentUser.uid || 
+    o.studentId === 'guest_student' || 
+    (currentUser.phone && o.phone && o.phone.replace(/\D/g, '').endsWith(currentUser.phone.replace(/\D/g, '').slice(-10)))
+  );
 
   const activeOrders = studentOrders.filter(
     o => o.status !== 'Collected' && o.status !== 'Cancelled' && o.status !== 'Rejected'

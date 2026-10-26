@@ -71,6 +71,7 @@ export function OrderProvider({ children }) {
         ordersUnsub();
         notifUnsub();
       };
+    } else {
       // Demo Store subscription
       const initialOrders = demoStore.getOrders();
       setOrders(initialOrders);

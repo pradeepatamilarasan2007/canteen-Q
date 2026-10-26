@@ -117,7 +117,7 @@ function MainApp() {
           onClose={() => setLastPlacedOrder(null)}
           onViewLiveQueue={(order) => {
             setActiveTrackOrder(order);
-            setActiveTab('orders');
+            setActiveTab('queue');
           }}
         />
       )}

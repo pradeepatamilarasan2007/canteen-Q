@@ -13,6 +13,16 @@ export default function LiveQueueView({ activeOrder }) {
     }
   }, [activeOrder]);
 
+  // Keep trackedOrder dynamically updated when kitchen changes status
+  useEffect(() => {
+    if (trackedOrder) {
+      const live = orders.find(o => o.id === trackedOrder.id || (o.tokenNumber && o.tokenNumber === trackedOrder.tokenNumber));
+      if (live && JSON.stringify(live) !== JSON.stringify(trackedOrder)) {
+        setTrackedOrder(live);
+      }
+    }
+  }, [orders]);
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
