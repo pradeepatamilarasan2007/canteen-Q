@@ -261,6 +261,40 @@ export default function MyOrdersView({ onOrderAgainSuccess }) {
                   </div>
                 )}
 
+                {/* Food Ready Alert Banner */}
+                {(order.status === 'Ready for Collection' || order.status === 'Ready for Pickup') && (
+                  <div className="mx-4 mt-3 p-3 bg-emerald-50 border border-emerald-300 rounded-xl flex flex-wrap items-center justify-between gap-3 shadow-xs">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-emerald-700 shrink-0" />
+                      <div>
+                        <span className="text-xs font-black text-emerald-950 block">
+                          🎉 Your meal is ready for collection at Counter 1!
+                        </span>
+                        <span className="text-[11px] text-slate-600">
+                          Show token <strong className="text-emerald-900">{order.tokenNumber}</strong> at the counter.
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={order.whatsappUrl || `https://api.whatsapp.com/send?phone=${(order.phone || '').replace(/\D/g, '')}&text=${encodeURIComponent(`🍽️ CanteenQ Token #${order.tokenNumber} is ready for pickup at Counter 1! Amount: ₹${order.totalAmount}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg flex items-center gap-1 shadow-xs transition-colors"
+                      >
+                        <span>💬 WhatsApp</span>
+                      </a>
+                      <a
+                        href={order.smsUrl || `sms:${order.phone}?body=${encodeURIComponent(`🍽️ CanteenQ Token #${order.tokenNumber} is ready for pickup at Counter 1!`)}`}
+                        className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-lg flex items-center gap-1 shadow-xs transition-colors"
+                      >
+                        <span>📱 SMS</span>
+                      </a>
+                    </div>
+                  </div>
+                )}
+
                 {/* Items Breakdown */}
                 <div className="p-4 space-y-3">
                   <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1.5">

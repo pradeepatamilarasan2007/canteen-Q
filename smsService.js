@@ -197,6 +197,11 @@ async function sendFoodReadySMS({ orderId, tokenNumber, customerName, phone }) {
       }
     }
 
+    const digitsOnly = recipient.replace(/\D/g, '');
+    const encodedMsg = encodeURIComponent(messageBody);
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${digitsOnly}&text=${encodedMsg}`;
+    const smsUrl = `sms:${recipient}?body=${encodedMsg}`;
+
     console.log(`[SMS Gateway Success] Message queued with Twilio!`);
     console.log(`  - Twilio Message SID: ${twilioResponse.sid}`);
     console.log(`  - Status: ${twilioResponse.status}`);
@@ -213,28 +218,29 @@ async function sendFoodReadySMS({ orderId, tokenNumber, customerName, phone }) {
       status: twilioResponse.status,
       recipient: twilioResponse.to,
       messageText: deliveredViaTrialTemplate ? '[Twilio Trial Template: sms_delivery_updates]' : messageBody,
-      isTrialTemplate: deliveredViaTrialTemplate
+      isTrialTemplate: deliveredViaTrialTemplate,
+      whatsappUrl,
+      smsUrl
     };
 
   } catch (err) {
+    const digitsOnly = recipient.replace(/\D/g, '');
+    const encodedMsg = encodeURIComponent(messageBody);
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${digitsOnly}&text=${encodedMsg}`;
+    const smsUrl = `sms:${recipient}?body=${encodedMsg}`;
+    const isTrialRestriction = (err.code === 572002 || err.code === 21608);
+
     console.error(`[SMS Gateway Error] Failed to send SMS via Twilio to ${recipient}:`);
     console.error(`  - Code: ${err.code || 'UNKNOWN'}`);
     console.error(`  - Message: ${err.message}`);
     if (err.moreInfo) console.error(`  - More Info: ${err.moreInfo}`);
 
-    // Actionable debugging advice for common Twilio error codes
-    if (err.code === 21608) {
-      console.error(`  [DIAGNOSIS]: You are using a Twilio Trial Account. The number ${recipient} is not verified.`);
-      console.error(`  [SOLUTION]: Add and verify ${recipient} at: https://console.twilio.com/us1/develop/phone-numbers/manage/verified`);
+    if (isTrialRestriction) {
+      console.error(`  [DIAGNOSIS]: You are using a Twilio Trial Account. Number ${recipient} is not verified in Twilio Console.`);
+      console.error(`  [DIRECT DISPATCH AVAILABLE]: Direct WhatsApp: ${whatsappUrl}`);
+      console.error(`  [DIRECT SMS AVAILABLE]: Direct SMS: ${smsUrl}`);
     } else if (err.code === 21211) {
       console.error(`  [DIAGNOSIS]: Twilio reported this phone number is invalid.`);
-      console.error(`  [SOLUTION]: Verify that the country code and mobile number format are correct.`);
-    } else if (err.code === 20003) {
-      console.error(`  [DIAGNOSIS]: Twilio Authentication Failed.`);
-      console.error(`  [SOLUTION]: Verify TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN in your .env file.`);
-    } else if (err.code === 21606) {
-      console.error(`  [DIAGNOSIS]: The TWILIO_PHONE_NUMBER is not owned by this Twilio account.`);
-      console.error(`  [SOLUTION]: Copy the active Twilio number from your Twilio Console.`);
     }
 
     console.log('----------------------------------------------------');
@@ -243,7 +249,11 @@ async function sendFoodReadySMS({ orderId, tokenNumber, customerName, phone }) {
       success: false,
       error: err.message,
       code: err.code || 'GATEWAY_ERROR',
-      recipient
+      isTrialRestriction,
+      recipient,
+      messageText: messageBody,
+      whatsappUrl,
+      smsUrl
     };
   }
 }

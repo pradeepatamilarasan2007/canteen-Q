@@ -1,5 +1,39 @@
 [
   {
+    "id": "ord_1792989299767",
+    "tokenNumber": "CQ889",
+    "studentId": "student_demo_1",
+    "customerName": "shree",
+    "phone": "+918344534801",
+    "rawPhone": "8344534801",
+    "phoneValid": true,
+    "items": [
+      {
+        "id": "m2",
+        "name": "Idli Sambar (2 pcs)",
+        "price": 40,
+        "quantity": 1,
+        "prepTimeMinutes": 4,
+        "isVeg": true
+      }
+    ],
+    "totalAmount": 40,
+    "paymentMethod": "Cash",
+    "specialInstructions": "less spicy",
+    "isScheduled": false,
+    "pickupDate": null,
+    "pickupTime": null,
+    "status": "Ready for Collection",
+    "createdAt": "2026-10-26T04:34:59.767Z",
+    "estimatedWaitMinutes": 26,
+    "smsNotificationSent": false,
+    "updatedAt": "2026-10-26T04:36:39.164Z",
+    "readyAt": "2026-10-26T04:36:39.164Z",
+    "smsStatus": "DELIVERY_FAILED",
+    "smsError": "No Twilio trial phone number is assigned for messaging to this destination number. Please add the 'to' number as a verified recipient.",
+    "smsRecipient": "+918344534801"
+  },
+  {
     "id": "ord_1792988671833",
     "tokenNumber": "CQ021",
     "studentId": "student_demo_1",
@@ -378,11 +412,16 @@
     "totalAmount": 135,
     "paymentMethod": "UPI",
     "specialInstructions": "spicy",
-    "status": "Preparing",
+    "status": "Ready for Collection",
     "createdAt": "2026-09-29T11:57:35.137Z",
     "estimatedPickup": "2026-09-29T12:08:35.137Z",
     "estimatedWaitMinutes": 11,
-    "updatedAt": "2026-10-11T13:53:48.410Z"
+    "updatedAt": "2026-10-26T04:37:02.302Z",
+    "readyAt": "2026-10-26T04:37:02.302Z",
+    "smsNotificationSent": false,
+    "smsStatus": "DELIVERY_FAILED",
+    "smsError": "Phone validation failed: Phone number \"987654321\" must contain at least 10 digits.",
+    "smsRecipient": "987654321"
   },
   {
     "id": "ord_101",

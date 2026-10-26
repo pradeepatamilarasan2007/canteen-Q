@@ -141,6 +141,31 @@ export default function LiveQueueView({ activeOrder }) {
                 })}
               </div>
             </div>
+
+            {/* Food Ready Multi-Channel Dispatch */}
+            {(trackedOrder.status === 'Ready for Collection' || trackedOrder.status === 'Ready for Pickup') && (
+              <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-emerald-200">
+                <span className="text-xs font-bold text-emerald-950">
+                  🎉 Food Ready at Counter 1!
+                </span>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={trackedOrder.whatsappUrl || `https://api.whatsapp.com/send?phone=${(trackedOrder.phone || '').replace(/\D/g, '')}&text=${encodeURIComponent(`🍽️ CanteenQ Token #${trackedOrder.tokenNumber} is ready for pickup at Counter 1!`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded-lg flex items-center gap-1 shadow-xs transition-colors"
+                  >
+                    <span>💬 WhatsApp Token</span>
+                  </a>
+                  <a
+                    href={trackedOrder.smsUrl || `sms:${trackedOrder.phone}?body=${encodeURIComponent(`🍽️ CanteenQ Token #${trackedOrder.tokenNumber} is ready for pickup at Counter 1!`)}`}
+                    className="px-2 py-1 bg-slate-800 hover:bg-slate-900 text-white text-[11px] font-bold rounded-lg flex items-center gap-1 shadow-xs transition-colors"
+                  >
+                    <span>📱 SMS</span>
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -533,6 +533,45 @@ export default function KitchenDashboard() {
 
                   </div>
 
+                  {/* Direct Multi-Channel Customer Notification Bar for Any Phone Number */}
+                  {isReady && ord.phone && (
+                    <div className="mt-1 p-2 bg-emerald-50/80 border border-emerald-200 rounded-xl space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-emerald-950">
+                        <span className="flex items-center gap-1">
+                          <MessageSquare className="w-3 h-3 text-emerald-700" />
+                          <span>Customer: {ord.phone}</span>
+                        </span>
+                        {ord.smsStatus === 'SENT' ? (
+                          <span className="text-[10px] text-emerald-700 font-extrabold flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> Twilio Delivered
+                          </span>
+                        ) : ord.smsStatus === 'TRIAL_RESTRICTION' ? (
+                          <span className="text-[10px] text-amber-700 font-bold bg-amber-100 px-1.5 py-0.5 rounded">
+                            Twilio Trial Unverified
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <a
+                          href={ord.whatsappUrl || `https://api.whatsapp.com/send?phone=${ord.phone.replace(/\D/g, '')}&text=${encodeURIComponent(`Hello ${ord.customerName}! 🍽️ Your CanteenQ order #${ord.tokenNumber} is ready for collection at the counter!`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-center text-xs font-bold flex items-center justify-center gap-1 shadow-xs transition-colors"
+                        >
+                          <span>💬 WhatsApp Alert</span>
+                        </a>
+
+                        <a
+                          href={ord.smsUrl || `sms:${ord.phone}?body=${encodeURIComponent(`Hello ${ord.customerName}! 🍽️ Your CanteenQ order #${ord.tokenNumber} is ready for collection at the counter!`)}`}
+                          className="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-center text-xs font-bold flex items-center justify-center gap-1 shadow-xs transition-colors"
+                        >
+                          <span>📱 Direct SMS</span>
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Quick Status Direct Selector (Staff can jump directly to Preparing, Ready for Collection, or Collected) */}
                   {ord.status !== 'Collected' && ord.status !== 'Cancelled' && ord.status !== 'Rejected' && (
                     <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1.5 border-t border-slate-200/60">
@@ -673,6 +712,23 @@ export default function KitchenDashboard() {
                       Add <code className="bg-amber-100/70 px-1 py-0.5 rounded font-mono">TWILIO_ACCOUNT_SID</code>, <code className="bg-amber-100/70 px-1 py-0.5 rounded font-mono">TWILIO_AUTH_TOKEN</code>, and <code className="bg-amber-100/70 px-1 py-0.5 rounded font-mono">TWILIO_PHONE_NUMBER</code> to your project's <code className="bg-amber-100/70 px-1 py-0.5 rounded font-mono">.env</code> file.
                     </div>
                   )}
+
+                  <div className="pt-2 flex gap-2">
+                    <a
+                      href={`https://api.whatsapp.com/send?phone=${testPhoneNumber.replace(/\D/g, '')}&text=${encodeURIComponent(testSMSMessage)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg text-center flex items-center justify-center gap-1 shadow-xs"
+                    >
+                      <span>💬 Send via WhatsApp</span>
+                    </a>
+                    <a
+                      href={`sms:${testPhoneNumber}?body=${encodeURIComponent(testSMSMessage)}`}
+                      className="py-1.5 px-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-lg text-center flex items-center justify-center gap-1 shadow-xs"
+                    >
+                      <span>📱 Native SMS</span>
+                    </a>
+                  </div>
                 </div>
               )}
 

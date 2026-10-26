@@ -689,6 +689,10 @@ app.patch('/api/orders/:id/status', async (req, res) => {
       });
 
       // 3. Record SMS outcome on the order object
+      order.whatsappUrl = smsResult.whatsappUrl;
+      order.smsUrl = smsResult.smsUrl;
+      order.notificationText = smsResult.messageText;
+
       if (smsResult.success) {
         order.smsNotificationSent = true;
         order.smsSentAt = new Date().toISOString();
@@ -698,9 +702,10 @@ app.patch('/api/orders/:id/status', async (req, res) => {
         delete order.smsError;
       } else {
         order.smsNotificationSent = false;
-        order.smsStatus = smsResult.notConfigured ? 'GATEWAY_NOT_CONFIGURED' : 'DELIVERY_FAILED';
+        order.smsStatus = smsResult.notConfigured ? 'GATEWAY_NOT_CONFIGURED' : (smsResult.isTrialRestriction ? 'TRIAL_RESTRICTION' : 'DELIVERY_FAILED');
         order.smsError = smsResult.error;
         order.smsRecipient = smsResult.recipient || order.phone;
+        order.isTrialRestriction = Boolean(smsResult.isTrialRestriction);
       }
     }
   }

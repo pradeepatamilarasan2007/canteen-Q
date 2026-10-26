@@ -78,8 +78,30 @@ export default function OrderReceiptModal({ order, onClose, onViewLiveQueue }) {
           </ul>
         </div>
 
+        {/* Multi-Channel Token Delivery */}
+        {order.phone && (
+          <div className="pt-1 flex gap-2">
+            <a
+              href={`https://api.whatsapp.com/send?phone=${order.phone.replace(/\D/g, '')}&text=${encodeURIComponent(`🍽️ CanteenQ Pickup Token: ${order.tokenNumber}\nCustomer: ${order.customerName}\nAmount: ₹${order.totalAmount} (${order.paymentMethod})\nEst. Preparation: ~${order.estimatedWaitMinutes || 10} mins`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+            >
+              <span>💬 Send to my WhatsApp</span>
+            </a>
+
+            <a
+              href={`sms:${order.phone}?body=${encodeURIComponent(`🍽️ CanteenQ Pickup Token: ${order.tokenNumber} | Customer: ${order.customerName} | Total: ₹${order.totalAmount} | Prep: ~${order.estimatedWaitMinutes || 10}m`)}`}
+              className="py-2 px-3 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+              title="Open phone SMS"
+            >
+              <span>📱 SMS</span>
+            </a>
+          </div>
+        )}
+
         {/* Action Button */}
-        <div className="pt-2">
+        <div className="pt-1">
           <button
             onClick={() => {
               onClose();
